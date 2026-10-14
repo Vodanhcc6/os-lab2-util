@@ -1,1 +1,2 @@
 Question 1: usertrap() at kernel/trap.c:68
+Question 3: User Mode (U-Mode)
