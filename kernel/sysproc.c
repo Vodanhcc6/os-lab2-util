@@ -110,3 +110,19 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64 sys_interpose(void)
+{
+  int mask;
+
+  argint(0, &mask);
+
+  if(argstr(1, myproc()->pathname, sizeof(myproc()->pathname)) < 0) {
+    return -1;
+  }
+  
+  myproc()->mask = mask;
+  
+
+  return 0;
+}
