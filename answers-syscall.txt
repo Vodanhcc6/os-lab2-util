@@ -1,2 +1,5 @@
 Question 1: usertrap() at kernel/trap.c:68
 Question 3: User Mode (U-Mode)
+Question 4: 
+    Assembly instruction: lw a3,0(zero) # 0 <_entry-0x80000000>
+    Register corresponding to num: a3.
