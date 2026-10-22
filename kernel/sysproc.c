@@ -113,6 +113,10 @@ sys_uptime(void)
 
 uint64 sys_interpose(void)
 {
+  if (myproc()->mask > 0){
+    return -1;
+  }
+
   int mask;
 
   argint(0, &mask);
