@@ -1,4 +1,7 @@
 Question 1: usertrap() at kernel/trap.c:68
+Question 2:
+    The value of p->trapframe->a7 is 15.
+    This value represents the system call number for SYS_open (defined in syscall.h)
 Question 3: User Mode (U-Mode)
 Question 4: 
     Assembly instruction: lw a3,0(zero) # 0 <_entry-0x80000000>
