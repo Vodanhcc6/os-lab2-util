@@ -1,0 +1,43 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand*\HyPL@Entry[1]{}
+\HyPL@Entry{0<</S/D>>}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Bảng tự đánh giá kết quả (Self-Assessment)}{1}{section.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Ảnh chụp kết quả thực thi kiểm thử toàn bộ Lab 2 (\texttt  {make grade}) đạt điểm số tối đa 60/60.}}{1}{figure.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Khảo sát hoạt động Kernel và Trap với GDB (Task 3.1)}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Câu hỏi 1: Hàm trong kernel gọi \texttt  {syscall()}}{2}{subsection.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Minh chứng GDB cho Câu hỏi 1: Lệnh \texttt  {backtrace} (\texttt  {bt}) chỉ rõ hàm \texttt  {usertrap()} đã gọi hàm \texttt  {syscall()}.}}{2}{figure.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Câu hỏi 2: Giá trị và ý nghĩa của thanh ghi \texttt  {p->trapframe->a7}}{2}{subsection.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Minh chứng GDB cho Câu hỏi 2: In cấu trúc trapframe hiển thị \texttt  {a7 = 0xf} (15), tương ứng số hiệu \texttt  {SYS\_open}.}}{2}{figure.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Câu hỏi 3: Chế độ đặc quyền trước đó của CPU}{3}{subsection.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Minh chứng GDB cho Câu hỏi 3: Giá trị thanh ghi \texttt  {\$sstatus} xác nhận chế độ thực thi trước đó là U-Mode ($\text  {SPP}=0$).}}{3}{figure.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Câu hỏi 4: Lệnh hợp ngữ gây kernel panic và thanh ghi tương ứng với biến \texttt  {num}}{3}{subsection.2.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Minh chứng GDB cho Câu hỏi 4: Lệnh hợp ngữ tại địa chỉ \texttt  {sepc} là \texttt  {lw a3, 0(zero)}, xác nhận biến \texttt  {num} nằm tại thanh ghi \texttt  {a3}.}}{3}{figure.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Câu hỏi 5: Nguyên nhân Kernel Panic và phân tích thanh ghi ngoại lệ}{4}{subsection.2.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Minh chứng GDB cho Câu hỏi 5: Thông số thanh ghi \texttt  {scause = 0xd} (13: Load Page Fault) và \texttt  {stval = 0x0}.}}{4}{figure.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Câu hỏi 6: Tên và PID của tiến trình đang chạy khi kernel panic}{4}{subsection.2.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Minh chứng GDB cho Câu hỏi 6: In thông tin cấu trúc tiến trình \texttt  {p->name = "initcode"} và \texttt  {p->pid = 1}.}}{4}{figure.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Cơ chế Sandbox cho Tiến trình (Tasks 3.2 \& 3.3)}{5}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Mục tiêu và Yêu cầu thiết kế}{5}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Danh sách các tệp được sửa đổi và bổ sung}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Các trường dữ liệu mới trong \texttt  {struct proc}}{5}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Sơ đồ tuần tự và đường đi của lời gọi hệ thống (Sequence Diagram)}{5}{subsection.3.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Sơ đồ luồng kiểm tra và điều phối lời gọi hệ thống khi áp dụng cơ chế Sandbox.}}{5}{figure.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Chi tiết hiện thực Kernel}{6}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}Cài đặt \texttt  {sys\_interpose()} trong \texttt  {kernel/sysproc.c}}{6}{subsubsection.3.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}Điều phối và chặn lời gọi hệ thống trong \texttt  {kernel/syscall.c}}{6}{subsubsection.3.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.3}Kế thừa trạng thái trong \texttt  {kfork()} (\texttt  {kernel/proc.c})}{6}{subsubsection.3.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Tấn công Rò rỉ Bộ nhớ chưa Khởi tạo (Task 3.4)}{7}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Bản chất lỗ hổng bảo mật (Vulnerability Root Cause)}{7}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Cơ chế tái sử dụng trang vật lý trong xv6 (Page Reuse Mechanism)}{7}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Vòng đời bộ nhớ và Kịch bản khai thác}{7}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Vòng đời bộ nhớ minh họa kịch bản khai thác rò rỉ thông tin qua ngăn xếp trang tự do.}}{7}{figure.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Xác định Offset của Chuỗi Bí mật}{7}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Mã nguồn cài đặt chương trình khai thác (\texttt  {user/attack.c})}{8}{subsection.4.5}\protected@file@percent }
+\bibcite{xv6book}{1}
+\bibcite{riscvpriv}{2}
+\bibcite{mitlab}{3}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Khó khăn gặp phải, Bài học kinh nghiệm \& Tuyên bố sử dụng AI}{9}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Khó khăn gặp phải và Giải pháp}{9}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Tuyên bố sử dụng công cụ AI (AI Declaration)}{9}{subsection.5.2}\protected@file@percent }
+\gdef \@abspage@last{9}
