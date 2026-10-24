@@ -11,5 +11,5 @@ Question 5:
     Value of stval: 0 (0x0, indicating the faulting virtual address / NULL pointer)
     Reason: The virtual address 0x0 is not mapped in the kernel page table. When the kernel attempts to load from 0x0, the MMU triggers a page fault because no valid mapping exists, leading to kernel panic.
 Question 6:
-    - initcode is the name of the binary that was running when the kernel paniced.
+    - init is the name of the binary that was running when the kernel paniced.
     - The pid of the binary is 1.
