@@ -42,9 +42,9 @@ main(int argc, char *argv[])
     }
     
     if(len > 0 && i + MSG_LEN + len < DATASIZE && secret[len] == '\0') {
-    write(1, secret, len);
-    write(1, "\n", 1);
-    exit(0);
+      write(1, secret, len);
+      write(1, "\n", 1);
+      exit(0);
     }
   }
   exit(0);

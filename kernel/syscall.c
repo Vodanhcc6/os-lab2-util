@@ -146,26 +146,25 @@ syscall(void)
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
 
-    if ((myproc()->mask >> num) & 1){
+    if ((p->mask >> num) & 1) {
       int allowed = 0;
-      
-      if (num == SYS_open || num == SYS_exec){
+
+      if (num == SYS_open || num == SYS_exec) {
         char path[MAXPATH];
-        if(argstr(0, path, MAXPATH) >= 0){
-          if (strncmp(myproc()->pathname, "-", MAXPATH) != 0 && strncmp(myproc()->pathname, path, MAXPATH) == 0){
+        if (argstr(0, path, MAXPATH) >= 0) {
+          if (strncmp(p->pathname, "-", MAXPATH) != 0 &&
+              strncmp(p->pathname, path, MAXPATH) == 0) {
             allowed = 1;
           }
         }
       }
-      
-      if (allowed){
+
+      if (allowed) {
         p->trapframe->a0 = syscalls[num]();
-      }
-      else {
+      } else {
         p->trapframe->a0 = -1;
       }
-    }
-    else {
+    } else {
       p->trapframe->a0 = syscalls[num]();
     }
   } else {
