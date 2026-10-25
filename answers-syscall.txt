@@ -1,4 +1,7 @@
 Question 1: usertrap() at kernel/trap.c:68
+Question 2:
+    The value of p->trapframe->a7 is 15.
+    This value represents the system call number for SYS_open (defined in syscall.h)
 Question 3: User Mode (U-Mode)
 Question 4: 
     Assembly instruction: lw a3,0(zero) # 0 <_entry-0x80000000>
@@ -7,3 +10,6 @@ Question 5:
     Value of scause: 13 (0xd, indicating a Load Page Fault)
     Value of stval: 0 (0x0, indicating the faulting virtual address / NULL pointer)
     Reason: The virtual address 0x0 is not mapped in the kernel page table. When the kernel attempts to load from 0x0, the MMU triggers a page fault because no valid mapping exists, leading to kernel panic.
+Question 6:
+    - init is the name of the binary that was running when the kernel paniced.
+    - The pid of the binary is 1.
