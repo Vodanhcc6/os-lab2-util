@@ -7,7 +7,6 @@
 #include "spinlock.h"
 #include "proc.h"
 #include "fs.h"
-
 /*
  * the kernel's page table.
  */
@@ -123,6 +122,26 @@ walk(pagetable_t pagetable, uint64 va, int alloc)
   return &pagetable[PX(0, va)];
 }
 
+pte_t *
+walk_l1(pagetable_t pagetable, uint64 va, int alloc)
+{
+  if (va >= MAXVA)
+    panic("walk");
+
+  int level = 2;
+  pte_t *pte = &pagetable[PX(level, va)];
+  if (*pte & PTE_V) {
+    pagetable = (pagetable_t)PTE2PA(*pte);
+  } else {
+    if (!alloc || (pagetable = (pde_t *)kalloc()) == 0)
+      return 0;
+    memset(pagetable, 0, PGSIZE);
+    *pte = PA2PTE(pagetable) | PTE_V;
+  }
+  
+  return &pagetable[PX(1, va)];
+}
+
 // Look up a virtual address, return the physical address,
 // or 0 if not mapped.
 // Can only be used to look up user pages.
@@ -148,13 +167,86 @@ walkaddr(pagetable_t pagetable, uint64 va)
 
 
 #if defined(LAB_PGTBL) || defined(SOL_MMAP) || defined(SOL_COW)
+static void
+_vmprint(pagetable_t pagetable, int level, uint64 va_base)
+{
+  for (int i = 0; i < 512; i++) {
+    pte_t pte = pagetable[i];
+    if (pte & PTE_V) {
+      uint64 shift = 12 + 9 * level;
+      uint64 va = va_base | ((uint64)i << shift);
+
+      if (level == 2)
+        printk(" ..");
+      else if (level == 1)
+        printk(" .. ..");
+      else
+        printk(" .. .. ..");
+
+      printk("%p: pte %p pa %p", (void *)va, (void *)pte, (void *)PTE2PA(pte));
+
+      if (PTE_LEAF(pte)) {
+        printk(" ");
+        if (pte & PTE_R) printk("R");
+        if (pte & PTE_W) printk("W");
+        if (pte & PTE_X) printk("X");
+        if (pte & PTE_U) printk("U");
+        if (level == 1)
+          printk(" SP");
+        printk("\n");
+      } else {
+        printk("\n");
+        if (level > 0)
+          _vmprint((pagetable_t)PTE2PA(pte), level - 1, va);
+      }
+    }
+  }
+}
+
 void
 vmprint(pagetable_t pagetable)
 {
-  // your code here
+  printk("page table %p\n", pagetable);
+  _vmprint(pagetable, 2, 0);
 }
 #endif
 
+int
+mapsuperpages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm)
+{
+  uint64 a;
+  pte_t *pte;
+  int superpage = 1LL << 21;
+
+  if ((va % PGSIZE) != 0)
+    panic("mappages: va not aligned");
+
+  if ((size % PGSIZE) != 0)
+    panic("mappages: size not aligned");
+
+  if (size == 0)
+    panic("mappages: size");
+
+  a = va;
+  // last = va + size - PGSIZE;
+  while (size > 0) {
+    int sz = PGSIZE;
+    if (size >= superpage && a % superpage == 0 && pa % superpage == 0 && ((pte = walk_l1(pagetable, a, 0)) != 0)){
+      sz = superpage;
+    }
+    else if ((pte = walk(pagetable, a, 1)) == 0){
+      return -1;
+    }
+    if (*pte & PTE_V)
+      panic("mappages: remap");
+    *pte = PA2PTE(pa) | perm | PTE_V;
+
+    a += sz;
+    pa += sz;
+    size -= sz;
+  }
+  return 0;
+}
 
 // add a mapping to the kernel page table.
 // only used when booting.
@@ -162,7 +254,9 @@ vmprint(pagetable_t pagetable)
 void
 kvmmap(pagetable_t kpgtbl, uint64 va, uint64 pa, uint64 sz, int perm)
 {
-  if (mappages(kpgtbl, va, sz, pa, perm) != 0)
+  // if (mappages(kpgtbl, va, sz, pa, perm) != 0)
+  //   panic("kvmmap");
+  if (mapsuperpages(kpgtbl, va, sz, pa, perm) != 0)
     panic("kvmmap");
 }
 

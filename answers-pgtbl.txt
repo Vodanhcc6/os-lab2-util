@@ -1,0 +1,26 @@
+Question 3: Which other xv6 system call(s) could be made faster using this shared page? Explain how.
+
+Tra loi:
+He thong co the tang toc system call uptime() bang cach su dung trang nho chia se (shared page) nay.
+Giai thich cach lam:
+- System call uptime() chi thuc hien doc bien toan cuc `ticks` (so nhip dong ho tu khi khoi dong he thong), day la thao tac Read-only va khong thay doi bat ky trang thai nao cua kernel hay tien trinh.
+- Ta co the them mot truong `ticks` vao cau truc chia se trong trang nho read-only (struct usyscall hoac mot trang chia se toan he thong).
+- Moi khi co ngat timer interrupt (trong trap.c), kernel se cap nhat gia tri bien `ticks` nay vao trang nho chia se.
+- O phia user-space, ham goi uptime() chi can doc truc tiep gia tri `ticks` tu trang nho duoc anh xa ma khong can thuc hien lenh ecall (kernel crossing), giup tang toc dang ke.
+
+
+Question 4: How many superpage PTEs does your solution use? How many bottom-level pages do these superpage PTEs save?
+
+Tra loi:
+1. So luong superpage PTEs ma giai phap su dung:
+- Tong cong giai phap su dung 95 superpage PTEs (o cap level-1).
+  Chi tiet:
+  + Vung nho PLIC: kich thuoc 0x4000000 (64 MB), can 64 MB / 2 MB = 32 superpages.
+  + Vung nho RAM vat ly (tu moc 2MB dau tien sau etext la 0x80200000 den PHYSTOP 0x88000000): kich thuoc 126 MB, can 126 MB / 2 MB = 63 superpages.
+  => Tong cong: 32 + 63 = 95 superpage PTEs.
+
+2. So luong trang cap thap nhat (bottom-level pages) duoc tiet kiem:
+- Moi superpage (2 MB) thay the cho 512 muc PTE trang thuong (4 KB), do do khong can cap phat trang bang phan trang cap 0 (level-0 page table page) de chua 512 muc do.
+- Vi vay, 95 superpage PTEs nay giup tiet kiem:
+  + Tiet kiem 95 trang bang phan trang cap 0 (bottom-level page table pages), tuong duong tiet kiem duoc 95 * 4096 = 389,120 bytes (~380 KB) RAM dung lam bang phan trang.
+  + Xet ve so muc anh xa cap 0, he thong thay the/tiet kiem 95 * 512 = 48,640 muc level-0 PTEs.
