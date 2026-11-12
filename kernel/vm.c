@@ -231,7 +231,7 @@ mapsuperpages(pagetable_t pagetable, uint64 va, uint64 size, uint64 pa, int perm
   // last = va + size - PGSIZE;
   while (size > 0) {
     int sz = PGSIZE;
-    if (size >= superpage && a % superpage == 0 && pa % superpage == 0 && ((pte = walk_l1(pagetable, a, 0)) != 0)){
+    if (size >= superpage && a % superpage == 0 && pa % superpage == 0 && ((pte = walk_l1(pagetable, a, 1)) != 0)){
       sz = superpage;
     }
     else if ((pte = walk(pagetable, a, 1)) == 0){
