@@ -107,10 +107,61 @@ sys_vmprint(void)
 #endif
 
 #ifdef LAB_PGTBL
-int
+uint64
 sys_pgaccess(void)
 {
-  // lab pgtbl: your code here.
+  // A byte array supports the lab's 256-page test without large shifts.
+  // Bound both the scan time and the kernel stack buffer (512 bytes).
+  enum { MAX_PGACCESS_PAGES = 4096 };
+  uchar mask[MAX_PGACCESS_PAGES / 8];
+  struct proc *p = myproc();
+  uint64 start, dst;
+  int npages;
+
+  argaddr(0, &start);
+  argint(1, &npages);
+  argaddr(2, &dst);
+  if (npages <= 0 || npages > MAX_PGACCESS_PAGES || start >= MAXVA)
+    return -1;
+
+  // malloc() need not return a page-aligned pointer. Scan the page
+  // containing start, then the next npages-1 pages.
+  start = PGROUNDDOWN(start);
+  if ((uint64)npages > (MAXVA - start) / PGSIZE)
+    return -1;
+  uint64 nbytes = (npages + 7) / 8;
+  if (dst >= MAXVA || nbytes > MAXVA - dst)
+    return -1;
+
+  // Validate the entire output first, including a possible page boundary.
+  // copyout() can lazily allocate; this syscall instead rejects holes.
+  for (uint64 va = PGROUNDDOWN(dst); va < dst + nbytes; va += PGSIZE) {
+    pte_t *pte = walk(p->pagetable, va, 0);
+    if (pte == 0 || (*pte & (PTE_V | PTE_U | PTE_R | PTE_W)) !=
+                        (PTE_V | PTE_U | PTE_R | PTE_W))
+      return -1;
+  }
+
+  memset(mask, 0, nbytes);
+  for (int i = 0; i < npages; i++) {
+    pte_t *pte = walk(p->pagetable, start + (uint64)i * PGSIZE, 0);
+    if (pte == 0 || (*pte & (PTE_V | PTE_U)) != (PTE_V | PTE_U) ||
+        !PTE_LEAF(*pte))
+      return -1;
+    if (*pte & PTE_A)
+      mask[i / 8] |= 1U << (i % 8);
+  }
+
+  // Do not consume the sample if validation or copying fails. xv6 has
+  // no user threads sharing this page table while this syscall runs.
+  if (copyout(p->pagetable, p->sz, dst, (char *)mask, nbytes) < 0)
+    return -1;
+  for (int i = 0; i < npages; i++) {
+    pte_t *pte = walk(p->pagetable, start + (uint64)i * PGSIZE, 0);
+    *pte &= ~PTE_A;
+  }
+  // Discard translations that could otherwise retain the old A state.
+  sfence_vma();
   return 0;
 }
 #endif

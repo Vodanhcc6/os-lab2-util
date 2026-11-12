@@ -1,0 +1,44 @@
+Question 1
+
+- V: PTE hợp lệ. 
+- R/W/X: cho phép đọc/ghi/thực thi.
+- U: user được truy cập nếu thao tác cũng được R/W/X cho phép.
+- A: trang đã được truy cập; D: trang đã được ghi. A và D là trạng thái, không phải quyền.
+- Các bit không ghi trong bảng bằng 0.
+
+VA            PTE         Bit bật       Nội dung và quyền truy cập
+0x0000000000  0x21fc885b  V R X U A     Trang text/rodata đầu: user đọc và thực thi, không ghi.
+0x0000001000  0x21fc7c1b  V R X U       Trang text/rodata tiếp: user đọc và thực thi, không ghi.
+0x0000002000  0x21fc7817  V R W U       Data/bss: user đọc và ghi, không thực thi.
+0x0000003000  0x21fc7407  V R W         Guard page: supervisor được đọc/ghi qua ánh xạ này; không thực thi; user bị chặn vì U=0.
+0x0000004000  0x21fc70d7  V R W U A D   Stack: user đọc và ghi, không thực thi.
+0x0000005000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x0000006000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x0000007000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x0000008000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x0000009000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x3fffff6000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x3fffff7000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x3fffff8000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x3fffff9000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x3fffffa000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x3fffffb000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x3fffffc000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
+0x3fffffd000  0x00000000  không        Vị trí USYSCALL chưa ánh xạ; không có quyền truy cập.
+0x3fffffe000  0x21fd08c7  V R W A D     Trapframe: kernel đọc và ghi; U=0 nên user không truy cập.
+0x3ffffff000  0x20001c4b  V R X A       Trampoline: kernel đọc và thực thi, không ghi; U=0 nên user không truy cập.
+
+Các VA liên tiếp không cần có PA liên tiếp: VA 0x0 ánh xạ tới PA 0x87f22000, còn VA 0x1000 ánh xạ tới PA 0x87f1f000 trong lần chạy này.
+
+Question 2
+
+Leaf trong output vmprint      Nội dung; thao tác được phép và bị cấm
+0x0000000000  RXU           Text/rodata đầu: user đọc và thực thi; cấm ghi.
+0x0000001000  RXU           Text/rodata tiếp: user đọc và thực thi; cấm ghi.
+0x0000002000  RWU           Data/bss: user đọc và ghi; cấm thực thi.
+0x0000003000  RW            Guard page: supervisor được đọc/ghi qua ánh xạ này; không thực thi; user bị chặn vì U=0.
+0x0000004000  RWU           Stack: user đọc và ghi; cấm thực thi.
+0x3fffffe000  RW            Trapframe: kernel đọc và ghi; user bị cấm vì U=0; không thực thi.
+0x3ffffff000  RX            Trampoline: kernel đọc và thực thi; cấm ghi, user bị cấm vì U=0.
+
+Mỗi leaf trên ứng với dòng cùng VA/PTE/PA hợp lệ ở Question 1. vmprint chỉ hiện R/W/X/U ở cột chữ; bit A/D vẫn nằm trong giá trị PTE đầy đủ. Các dòng PTE=0 của Question 1 không xuất hiện trong vmprint vì V=0. Bốn PTE hợp lệ còn lại mà vmprint in là entry trung gian trỏ tới bảng trang cấp dưới, không phải trang nội dung.
