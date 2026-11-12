@@ -7,11 +7,11 @@ Question 1
 - Các bit không ghi trong bảng bằng 0.
 
 VA            PTE         Bit bật       Nội dung và quyền truy cập
-0x0000000000  0x21fdf85b  V R X U A     Trang text/rodata đầu: user đọc và thực thi, không ghi.
-0x0000001000  0x21fdec1b  V R X U       Trang text/rodata tiếp: user đọc và thực thi, không ghi.
-0x0000002000  0x21fde817  V R W U       Data/bss: user đọc và ghi, không thực thi.
-0x0000003000  0x21fde407  V R W         Guard page: supervisor được đọc/ghi qua ánh xạ này; không thực thi; user bị chặn vì U=0.
-0x0000004000  0x21fde0d7  V R W U A D   Stack: user đọc và ghi, không thực thi.
+0x0000000000  0x21fc885b  V R X U A     Trang text/rodata đầu: user đọc và thực thi, không ghi.
+0x0000001000  0x21fc7c1b  V R X U       Trang text/rodata tiếp: user đọc và thực thi, không ghi.
+0x0000002000  0x21fc7817  V R W U       Data/bss: user đọc và ghi, không thực thi.
+0x0000003000  0x21fc7407  V R W         Guard page: supervisor được đọc/ghi qua ánh xạ này; không thực thi; user bị chặn vì U=0.
+0x0000004000  0x21fc70d7  V R W U A D   Stack: user đọc và ghi, không thực thi.
 0x0000005000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
 0x0000006000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
 0x0000007000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
@@ -24,11 +24,11 @@ VA            PTE         Bit bật       Nội dung và quyền truy cập
 0x3fffffa000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
 0x3fffffb000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
 0x3fffffc000  0x00000000  không        Chưa ánh xạ; không có quyền truy cập.
-0x3fffffd000  0x21fec413  V R U         USYSCALL chứa PID: user được đọc; không ghi, không thực thi.
-0x3fffffe000  0x21fe7cc7  V R W A D     Trapframe: kernel đọc và ghi; U=0 nên user không truy cập.
+0x3fffffd000  0x00000000  không        Vị trí USYSCALL chưa ánh xạ; không có quyền truy cập.
+0x3fffffe000  0x21fd08c7  V R W A D     Trapframe: kernel đọc và ghi; U=0 nên user không truy cập.
 0x3ffffff000  0x20001c4b  V R X A       Trampoline: kernel đọc và thực thi, không ghi; U=0 nên user không truy cập.
 
-Các VA liên tiếp không cần có PA liên tiếp: VA 0x0 ánh xạ tới PA 0x87f7e000, còn VA 0x1000 ánh xạ tới PA 0x87f7b000 trong lần chạy này.
+Các VA liên tiếp không cần có PA liên tiếp: VA 0x0 ánh xạ tới PA 0x87f22000, còn VA 0x1000 ánh xạ tới PA 0x87f1f000 trong lần chạy này.
 
 Question 2
 
@@ -38,7 +38,6 @@ Leaf trong output vmprint      Nội dung; thao tác được phép và bị c�
 0x0000002000  RWU           Data/bss: user đọc và ghi; cấm thực thi.
 0x0000003000  RW            Guard page: supervisor được đọc/ghi qua ánh xạ này; không thực thi; user bị chặn vì U=0.
 0x0000004000  RWU           Stack: user đọc và ghi; cấm thực thi.
-0x3fffffd000  RU            USYSCALL chứa PID: user được đọc; cấm ghi và thực thi.
 0x3fffffe000  RW            Trapframe: kernel đọc và ghi; user bị cấm vì U=0; không thực thi.
 0x3ffffff000  RX            Trampoline: kernel đọc và thực thi; cấm ghi, user bị cấm vì U=0.
 
