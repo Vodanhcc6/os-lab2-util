@@ -1,26 +1,26 @@
 Question 3: Which other xv6 system call(s) could be made faster using this shared page? Explain how.
 
-Tra loi:
-He thong co the tang toc system call uptime() bang cach su dung trang nho chia se nay.
-Giai thich cach lam:
-- System call uptime() chi thuc hien doc bien toan cuc ticks, day la thao tac Read-only va khong thay doi bat ky trang thai nao cua kernel hay tien trinh.
-- Ta co the them mot truong ticks vao cau truc chia se trong trang nho read-only (struct usyscall hoac mot trang chia se toan he thong).
-- Moi khi co ngat timer interrupt (trong trap.c), kernel se cap nhat gia tri bien ticks nay vao trang nho chia se.
-- O phia user-space, ham goi uptime() chi can doc truc tiep gia tri ticks tu trang nho duoc anh xa ma khong can thuc hien lenh ecall giup tang toc dang ke.
+Trả lời:
+Hệ thống có thể tăng tốc system call uptime() bằng cách sử dụng trang nhớ chia sẻ này.
+Giải thích cách làm:
+- System call uptime() chỉ thực hiện đọc biến toàn cục ticks, đây là thao tác read-only và không thay đổi bất kỳ trạng thái nào của kernel hay tiến trình.
+- Ta có thể thêm một trường ticks vào cấu trúc chia sẻ trong trang nhớ read-only (struct usyscall hoặc một trang chia sẻ toàn hệ thống).
+- Mỗi khi có ngắt timer interrupt (trong trap.c), kernel sẽ cập nhật giá trị biến ticks này vào trang nhớ chia sẻ.
+- Ở phía user-space, hàm gọi uptime() chỉ cần đọc trực tiếp giá trị ticks từ trang nhớ được ánh xạ mà không cần thực hiện lệnh ecall, giúp tăng tốc đáng kể.
 
 
 Question 4: How many superpage PTEs does your solution use? How many bottom-level pages do these superpage PTEs save?
 
-Tra loi:
-1. So luong superpage PTEs ma nhom:
-- Tong cong giai phap su dung 95 superpage PTEs (o cap level-1).
-  Chi tiet:
-  + Vung nho PLIC: kich thuoc 0x4000000 (64 MB), can 64 MB / 2 MB = 32 superpages.
-  + Vung nho RAM vat ly (tu moc 2MB dau tien sau etext la 0x80200000 den PHYSTOP 0x88000000): kich thuoc 126 MB, can 126 MB / 2 MB = 63 superpages.
-  => Tong cong: 32 + 63 = 95 superpage PTEs.
+Trả lời:
+1. Số lượng superpage PTEs mà nhóm sử dụng:
+- Tổng cộng giải pháp sử dụng 95 superpage PTEs (ở cấp level-1).
+  Chi tiết:
+  + Vùng nhớ PLIC: kích thước 0x4000000 (64 MB), cần 64 MB / 2 MB = 32 superpages.
+  + Vùng nhớ RAM vật lý (từ mốc 2 MB đầu tiên sau etext là 0x80200000 đến PHYSTOP 0x88000000): kích thước 126 MB, cần 126 MB / 2 MB = 63 superpages.
+  => Tổng cộng: 32 + 63 = 95 superpage PTEs.
 
-2. So luong trang cap thap nhat (bottom-level pages) duoc tiet kiem:
-- Moi superpage (2 MB) thay the cho 512 muc PTE trang thuong (4 KB), do do khong can cap phat trang bang phan trang cap 0 (level-0 page table page) de chua 512 muc do.
-- Vi vay, 95 superpage PTEs nay giup tiet kiem:
-  + Tiet kiem 95 trang bang phan trang cap 0 (bottom-level page table pages), tuong duong tiet kiem duoc 95 * 4096 = 389,120 bytes (~380 KB) RAM dung lam bang phan trang.
-  + Xet ve so muc anh xa cap 0, he thong thay the/tiet kiem 95 * 512 = 48,640 muc level-0 PTEs.
+2. Số lượng trang cấp thấp nhất (bottom-level pages) được tiết kiệm:
+- Mỗi superpage (2 MB) thay thế cho 512 mục PTE trang thường (4 KB), do đó không cần cấp phát trang bảng phân trang cấp 0 (level-0 page table page) để chứa 512 mục đó.
+- Vì vậy, 95 superpage PTEs này giúp tiết kiệm:
+  + Tiết kiệm 95 trang bảng phân trang cấp 0 (bottom-level page table pages), tương đương tiết kiệm được 95 * 4096 = 389,120 bytes (~380 KB) RAM dùng làm bảng phân trang.
+  + Xét về số mục ánh xạ cấp 0, hệ thống thay thế/tiết kiệm 95 * 512 = 48,640 mục level-0 PTEs.
